@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Push to HuggingFace Space
-      uses: huggingface/huggingface-actions@v1
-      with:
-        token: ${{ secrets.HF_TOKEN }}
-        repo-id: KalathurKishore/InteriorEngineFullV2
-        repo-type: space
+      - name: Deploy to HuggingFace Space
+        uses: huggingface/hf-actions@v1
+        with:
+          token: ${{ secrets.HF_TOKEN }}
+          repo-id: KalathurKishore/InteriorEngineFullV2
+          repo-type: space
