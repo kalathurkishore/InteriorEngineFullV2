@@ -1,0 +1,8 @@
+STARTING first 100 rows run
+[001/100] Capturing: https://www.instagram.com/reel/DPUDstnDTNH/?igsh=MTNjdDA2OWJkMWVobg==
+Traceback (most recent call last):
+  File "/home/kishore/InteriorEngineFinalComplete/InteriorEngineFullV2/InteriorEngineFullV2/run_first_100.py", line 30, in <module>
+    out = s.capture_screenshots(url, s.hash_url(url), shots=shots)
+  File "/home/kishore/InteriorEngineFinalComplete/InteriorEngineFullV2/InteriorEngineFullV2/scripts/screenshot_links.py", line 269, in capture_screenshots
+    time.sleep(delay)
+KeyboardInterrupt

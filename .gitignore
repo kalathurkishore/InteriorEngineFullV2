@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db/*.db-journal
+images/_query_temp.jpg
+.vscode/
+.git/
+.env
+*.zip
+*.tar.gz
+*Zone.Identifier
