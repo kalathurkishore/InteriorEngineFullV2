@@ -14,21 +14,84 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history, not shallow
-          lfs: true       # Enable Git LFS support
+          fetch-depth: 0
+          lfs: false  # Don't fetch LFS files, they're too large
+
+      - name: Prepare deployment files
+        run: |
+          # Create a clean deployment directory with only necessary files
+          mkdir -p deploy
+          
+          # Copy essential app files
+          cp -r ui deploy/
+          cp -r scripts deploy/
+          cp requirements.txt deploy/ || true
+          cp README.md deploy/ || true
+          
+          # Create empty directories for runtime
+          mkdir -p deploy/db
+          mkdir -p deploy/images
+          mkdir -p deploy/models
+          
+          # Create a .gitignore for HuggingFace to exclude large files
+          cat > deploy/.gitignore << 'EOF'
+          # Exclude large runtime files
+          *.db
+          *.db-journal
+          images/*.png
+          images/*.jpg
+          images/*.jpeg
+          images/*.webp
+          models/*.pt
+          models/*.pth
+          faiss.index
+          faiss_ids.pkl
+          __pycache__/
+          *.pyc
+          .env
+          EOF
+          
+          # Create app.py for HuggingFace Spaces in the root
+          cat > deploy/app.py << 'EOF'
+          # HuggingFace Spaces entry point
+          import sys
+          import os
+          sys.path.insert(0, os.path.dirname(__file__))
+          
+          # Import and run the Streamlit app
+          from ui.app import *
+          EOF
+          
+          # Create a README for the Space
+          cat > deploy/README.md << 'EOF'
+          ---
+          title: Interior Inspiration Engine
+          emoji: 🏠
+          colorFrom: blue
+          colorTo: purple
+          sdk: streamlit
+          sdk_version: 1.32.0
+          app_file: ui/app.py
+          pinned: false
+          ---
+          
+          # Interior Inspiration Engine
+          
+          AI-powered interior design search engine using CLIP and FAISS.
+          
+          **Note**: This is a demo deployment. The full dataset is not included due to size constraints.
+          EOF
 
       - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          cd deploy
+          git init
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
           
-          # Unshallow the repository if it's still shallow
-          if [ -f .git/shallow ]; then
-            git fetch --unshallow
-          fi
+          git add .
+          git commit -m "Deploy from GitHub Actions"
           
-          # Add HuggingFace remote and push
-          git remote add hf https://KalathurKishore:$HF_TOKEN@huggingface.co/spaces/KalathurKishore/InteriorEngineFullV2 || true
-          git push hf main:main --force
+          git push --force https://KalathurKishore:$HF_TOKEN@huggingface.co/spaces/KalathurKishore/InteriorEngineFullV2 HEAD:main
