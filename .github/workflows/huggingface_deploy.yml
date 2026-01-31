@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history, not shallow
+          lfs: true       # Enable Git LFS support
 
       - name: Push to Hugging Face Space
         env:
@@ -20,4 +23,12 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git push https://KalathurKishore:$HF_TOKEN@huggingface.co/spaces/KalathurKishore/InteriorEngineFullV2 main:main --force
+          
+          # Unshallow the repository if it's still shallow
+          if [ -f .git/shallow ]; then
+            git fetch --unshallow
+          fi
+          
+          # Add HuggingFace remote and push
+          git remote add hf https://KalathurKishore:$HF_TOKEN@huggingface.co/spaces/KalathurKishore/InteriorEngineFullV2 || true
+          git push hf main:main --force
