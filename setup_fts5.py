@@ -11,10 +11,10 @@ import sys
 import os
 
 # Add project root to path
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, ROOT)
 
-from InteriorEngineFullV2.scripts.db_utils import rebuild_fts5, has_fts5
+from scripts.db_utils import rebuild_fts5, has_fts5
 
 def main():
     print("="*60)
